@@ -156,6 +156,9 @@ struct MetaData {
 
 /* WARNING: Never insert or delete items or rearrange the order of the items
  * in this array. This will break existing infobox configurations of all users!
+ *
+ * The index of each element matches a corresponding entry in InfoBoxFactory::Type
+ * from src/InfoBoxes/Content/Type.hpp. New entries must be added last.
  */
 
 static constexpr MetaData meta_data[] = {
@@ -1275,6 +1278,16 @@ static constexpr MetaData meta_data[] = {
     UpdateInfoBoxFinalMC0AltitudeDiff,
     FIN_MC0_ALTD,
     FIN_MC0_ALTD,
+  },
+
+  // NEXT_ARROW
+  {
+    N_("Next waypoint arrow"),
+    N_("Next WP arrow"),
+    N_("Arrow pointing to the next navigation target. The name of the waypoint and the distance are also shown."),
+    IBFHelper<InfoBoxContentNextArrow>::Create,
+    NEXT_ARROW,
+    NEXT_ARROW,
   },
 };
 

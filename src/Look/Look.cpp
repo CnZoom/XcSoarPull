@@ -75,6 +75,7 @@ Look::InitialiseConfigured(const UISettings &settings,
 #endif
                       infobox_title_font);
   wind_arrow_info_box.Initialise(map_bold_font, settings.info_boxes.inverse);
+  next_arrow_info_box.Initialise(settings.info_boxes.inverse);
   flarm_gauge.Initialise(traffic, true, settings.info_boxes.inverse);
   thermal_assistant_gauge.Initialise(true, settings.info_boxes.inverse);
   final_glide_bar.Initialise(map_font);

@@ -137,7 +137,7 @@ namespace InfoBoxFactory
     CruiseEfficiency,
     WIND_ARROW,
     THERMAL_ASSISTANT,
-
+    /* 100..109 */
     START_OPEN_TIME,
     START_OPEN_ARRIVAL_TIME,
 
@@ -153,6 +153,9 @@ namespace InfoBoxFactory
     OLC_SPEED,
 
     FIN_MC0_ALTD,
+
+    /* 110..119 */
+    NEXT_ARROW,
 
     e_NUM_TYPES /* Last item */
   };

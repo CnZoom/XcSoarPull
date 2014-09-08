@@ -1,0 +1,95 @@
+/*
+Copyright_License {
+
+  XCSoar Glide Computer - http://www.xcsoar.org/
+  Copyright (C) 2000-2014 The XCSoar Project
+  A detailed list of copyright holders can be found in the file "AUTHORS".
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+}
+*/
+
+#include "NextArrowRenderer.hpp"
+#include "Look/NextArrowLook.hpp"
+#include "Screen/Canvas.hpp"
+#include "Screen/Layout.hpp"
+#include "Math/Screen.hpp"
+#include "NMEA/Derived.hpp"
+#include "Util/Macros.hpp"
+
+
+void
+NextArrowRenderer::DrawArrow(Canvas &canvas, const PixelRect &rc,
+                             Angle angle_top, Angle angle_bottom)
+{
+  Angle angles[] = { angle_top, angle_bottom };
+  const RasterPoint pt = rc.GetCenter();
+
+  /*
+  ** Define arrow geometry for forward pointing arrow.
+  **
+  **                               +   (0,-head_len)
+  **                              / \
+  **                             /   \
+  **                            /     \
+  ** (-head_width,-head_base)  +-+   +-+  (head_width,-head_base)
+  **   (-tail_width,-head_base)  | o |  (tail_width,-head_base)
+  **                             |   |
+  **                             |   |
+  **     (-tail_width,tail_len)  +---+  (tail_width,tail_len)
+  **
+  ** The "tail" of the arrow is slightly shorter than the "head" to avoid
+  ** the corners of the tail to stick out of the bounding PixelRect.
+  **
+  ** The size is set to fill the rectangle rc.
+  ** The arithmethic on size and scale is intended to counter the
+  ** scaling applied by the canvas.DrawPolygon function.
+  */
+  const auto scale =              Layout::Scale(1) * 100;
+  const UPixelScalar size =       std::min(rc.right - rc.left, rc.bottom - rc.top);
+  const UPixelScalar head_len =   50 * size / scale;
+  const UPixelScalar head_width = 36 * size / scale;
+  const UPixelScalar head_base =  head_len - head_width;
+  const UPixelScalar tail_width = 17 * size / scale;
+  const UPixelScalar tail_len =   head_len - tail_width / 2;
+
+  // Draw arrows, bottom to top layer
+  for (int i = ARRAY_SIZE(angles) - 1; i >= 0; i--) {
+    // Skip this layer if identical to the one on top.
+    if ((i > 0) && (angles[i] == angles[i - 1]))
+      continue;
+
+    // An array of the arrow corner coordinates.
+    RasterPoint arrow[] = {
+      { 0, -head_len },
+      { head_width, -head_base },
+      { tail_width, -head_base },
+      { tail_width, tail_len },
+      { -tail_width, tail_len },
+      { -tail_width, -head_base },
+      { -head_width, -head_base },
+    };
+
+    // Rotate the arrow.
+    PolygonRotateShift(arrow, ARRAY_SIZE(arrow), pt.x, pt.y, angles[i]);
+
+    // Draw the arrow.
+    canvas.Select(look.outline_pen);
+    canvas.Select(look.brush[i]);
+    canvas.DrawPolygon(arrow, ARRAY_SIZE(arrow));
+  }
+}
+
+
