@@ -962,7 +962,7 @@ InfoBoxContentNextArrow::Update(InfoBoxData &data)
     ? protected_task_manager->GetActiveWaypoint()
     : NULL;
   if (!way_point)
-    data.SetTitle(_("Next WP Arrow"));
+    data.SetTitle(_("Next arrow"));
   else
     data.SetTitle(way_point->name.c_str());
 
